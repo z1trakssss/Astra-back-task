@@ -8,7 +8,7 @@ from zipfile import ZipFile
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.core.management.base import CommandError
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from openpyxl import load_workbook
 
 from .models import MacroWeek, Sale
@@ -93,6 +93,14 @@ class SalesInterfaceTests(TestCase):
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[1][:3], ("lumber", 1, 2))
 
+    @override_settings(
+        STORAGES={
+            "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+            "staticfiles": {
+                "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"
+            },
+        }
+    )
     def test_macro_endpoint_and_admin_dashboard(self):
         """Проверяет недельный ряд и отображение панели администратора."""
         result = self.client.get(
