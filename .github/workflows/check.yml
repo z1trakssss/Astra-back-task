@@ -13,3 +13,14 @@ jobs:
       - run: pip install -r requirements.txt
       - run: python manage.py check
       - run: python manage.py test
+  compose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose -f compose.yml -f compose.build.yml config
+      - run: docker compose -f compose.yml -f compose.build.yml up -d --build
+      - run: curl --retry 90 --retry-connrefused --retry-delay 5 --fail http://127.0.0.1:8000/health/
+      - run: python -c "import json,urllib.request; data=json.load(urllib.request.urlopen('http://127.0.0.1:8000/api/v1/sales/?page_size=1')); assert data['count']==340000"
+      - if: always()
+        run: docker compose -f compose.yml -f compose.build.yml down -v

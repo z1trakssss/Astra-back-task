@@ -1,6 +1,6 @@
-"""Routes for the administration interface and read-only API."""
 from django.contrib import admin
 from django.urls import path
+
 from sales import api
 
 urlpatterns = [

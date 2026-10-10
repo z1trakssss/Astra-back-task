@@ -1,13 +1,14 @@
-"""Validated filters shared by the API and XLSX export."""
 from datetime import date
+
 from django.core.exceptions import ValidationError
+
 from .models import Sale
 
 FIELDS = ("region", "product_category", "sku", "channel", "customer_type")
 
 
 def filtered_sales(params):
-    """Apply exact dimension filters and an inclusive week interval."""
+    """Фильтрует продажи по атрибутам и диапазону дат включительно."""
     queryset = Sale.objects.select_related("week")
     for field in FIELDS:
         value = params.get(field)

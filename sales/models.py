@@ -1,9 +1,8 @@
-"""Normalized sales facts and weekly economic indicators."""
 from django.db import models
 
 
 class MacroWeek(models.Model):
-    """Indicators observed for a Monday; one record per transaction week."""
+    """Макроэкономические показатели за одну неделю."""
 
     week = models.DateField(primary_key=True)
     housing_starts_index = models.DecimalField(max_digits=9, decimal_places=2)
@@ -17,15 +16,21 @@ class MacroWeek(models.Model):
         verbose_name_plural = "Недельные показатели"
 
     def __str__(self):
-        """Show the observation week in admin lists."""
+        """Возвращает дату наблюдения."""
         return self.week.isoformat()
 
 
 class Sale(models.Model):
-    """A single transaction in the source file, linked to its observation week."""
+    """Транзакция из исходного файла."""
 
     source_row = models.PositiveIntegerField(unique=True)
-    week = models.ForeignKey(MacroWeek, to_field="week", db_column="week", on_delete=models.PROTECT, related_name="sales")
+    week = models.ForeignKey(
+        MacroWeek,
+        to_field="week",
+        db_column="week",
+        on_delete=models.PROTECT,
+        related_name="sales",
+    )
     region = models.CharField(max_length=50, db_index=True)
     product_category = models.CharField(max_length=50, db_index=True)
     sku = models.CharField(max_length=40, db_index=True)
@@ -37,10 +42,13 @@ class Sale(models.Model):
 
     class Meta:
         ordering = ["source_row"]
-        indexes = [models.Index(fields=["week", "region"]), models.Index(fields=["week", "product_category"])]
+        indexes = [
+            models.Index(fields=["week", "region"]),
+            models.Index(fields=["week", "product_category"]),
+        ]
         verbose_name = "продажа"
         verbose_name_plural = "Продажи"
 
     def __str__(self):
-        """Identify a transaction without loading related records."""
+        """Возвращает номер строки и артикул."""
         return f"#{self.source_row}: {self.sku}"

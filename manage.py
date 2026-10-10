@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-"""Django command line entry point."""
 import os
 import sys
 
