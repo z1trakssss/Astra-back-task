@@ -1,0 +1,14 @@
+{% extends "admin/base.html" %}
+{% block content %}
+{% if kpi %}
+<style>
+.astra-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(275px,1fr));gap:18px;margin:20px 0}.astra-card{border:1px solid #ddd;border-radius:10px;padding:20px}.astra-card h2{font-size:16px;margin:0 0 14px}.astra-metric{font-size:26px;font-weight:700}.astra-row{margin:10px 0}.astra-label{display:flex;justify-content:space-between;gap:12px;font-size:12px}.astra-track{height:11px;background:#e5e7eb;border-radius:6px;overflow:hidden;margin-top:4px}.astra-bar{height:100%;background:#2563eb;border-radius:6px}
+</style>
+<div class="astra-grid">
+<section class="astra-card"><h2>Продажи</h2><div class="astra-metric">{{ kpi.count }}</div><p>Транзакций · {{ kpi.units }} единиц</p><p>Выручка: {{ kpi.revenue|floatformat:2 }} USD</p></section>
+<section class="astra-card"><h2>Последние 12 месяцев · выручка</h2>{% for row in months %}<div class="astra-row"><div class="astra-label"><span>{{ row.label|slice:':7' }}</span><span>{{ row.revenue|floatformat:0 }}</span></div><div class="astra-track"><div class="astra-bar" style="width:{{ row.width }}%"></div></div></div>{% endfor %}</section>
+<section class="astra-card"><h2>Регионы · выручка</h2>{% for row in regions %}<div class="astra-row"><div class="astra-label"><span>{{ row.label }}</span><span>{{ row.revenue|floatformat:0 }}</span></div><div class="astra-track"><div class="astra-bar" style="width:{{ row.width }}%"></div></div></div>{% endfor %}</section>
+<section class="astra-card"><h2>Категории · выручка</h2>{% for row in categories %}<div class="astra-row"><div class="astra-label"><span>{{ row.label }}</span><span>{{ row.revenue|floatformat:0 }}</span></div><div class="astra-track"><div class="astra-bar" style="width:{{ row.width }}%"></div></div></div>{% endfor %}</section>
+</div>
+{% endif %}
+{% endblock %}
